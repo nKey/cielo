@@ -31,7 +31,7 @@ abstract class AbstractCieloNode implements XMLNode {
 	 * Versão do webservice da Cielo
 	 * @var		string
 	 */
-	private $version = '1.1.0';
+	private $version = '1.2.0';
 
 	/**
 	 * XML de requisição (para debug)
@@ -56,7 +56,7 @@ abstract class AbstractCieloNode implements XMLNode {
 	 * @param	HTTPRequest $httpRequester Objeto que será utilizado para a conexão
 	 * @param	string $version Versão do webservice
 	 */
-	public function __construct( HTTPRequest $httpRequester , $version = '1.1.0' ) {
+	public function __construct( HTTPRequest $httpRequester , $version = '1.2.0' ) {
 		$this->httpRequester = $httpRequester;
 		$this->nodes = new ArrayObject();
 		$this->version = $version;
