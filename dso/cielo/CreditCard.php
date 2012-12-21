@@ -17,7 +17,27 @@ interface CreditCard {
 	const VISA = 'visa';
 
 	/**
-	 * Cartão MarterCard
+	 * Cartão MasterCard
 	 */
-	const MASTER_CARD = 'mastercard';
+	const MASTERCARD = 'mastercard';
+
+	/**
+	 * Cartão Elo
+	 */
+	const ELO = 'elo';
+
+	/**
+	 * Cartão American Express
+	 */
+	const AMEX = 'amex';
+
+	/**
+	 * Cartão Diners Club
+	 */
+	const DINERS = 'diners';
+
+	/**
+	 * Cartão Discover
+	 */
+	const DISCOVER = 'discover';
 }

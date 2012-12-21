@@ -169,7 +169,7 @@ class Cielo {
 		if ( ( ( $paymentProduct == PaymentProduct::ONE_TIME_PAYMENT ) || ( $paymentProduct == PaymentProduct::DEBIT ) ) && ( $parcels != 1 ) ) {
 			throw new UnexpectedValueException( 'Quando a forma de pagamento é Crédito à vista ou Débito, o número de parcelas deve ser 1' );
 		} else {
-			if ( $creditCard == CreditCard::MASTER_CARD && $indicator != 1 ) {
+			if ( $creditCard == CreditCard::MASTERCARD && $indicator != 1 ) {
 				throw new UnexpectedValueException( 'Quando o cartão é MasterCard, o indicador deve ser 1' );
 			}
 
