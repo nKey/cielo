@@ -5,7 +5,7 @@
  * @package		dso.http
  */
 
-require_once 'dso/http/HTTPRequestMethod.php';
+require_once(dirname(__FILE__) . '/HTTPRequestMethod.php');
 
 /**
  * @brief		Requisição HTTP

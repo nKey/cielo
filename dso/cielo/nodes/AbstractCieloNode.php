@@ -5,8 +5,8 @@
  * @package		dso.cielo.nodes
  */
 
-require_once 'dso/cielo/nodes/XMLNode.php';
-require_once 'dso/http/HTTPRequestMethod.php';
+require_once(dirname(__FILE__) . '/XMLNode.php');
+require_once(dirname(__FILE__) . '/../../http/HTTPRequestMethod.php');
 
 /**
  * @brief		Nó abstrato de requisições e consultas

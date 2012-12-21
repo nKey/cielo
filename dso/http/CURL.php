@@ -5,8 +5,8 @@
  * @package		dso.http
  */
 
-require_once 'dso/http/HTTPRequest.php';
-require_once 'dso/http/HTTPRequestMethod.php';
+require_once(dirname(__FILE__) . '/HTTPRequest.php');
+require_once(dirname(__FILE__) . '/HTTPRequestMethod.php');
 
 /**
  * @brief		Implementação HTTPRequest para cURL

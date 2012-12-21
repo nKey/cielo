@@ -5,8 +5,8 @@
  * @package		dso.cielo.nodes
  */
 
-require_once 'dso/cielo/nodes/XMLNode.php';
-require_once 'dso/cielo/PaymentProduct.php';
+require_once(dirname(__FILE__) . '/XMLNode.php');
+require_once(dirname(__FILE__) . '/../PaymentProduct.php');
 
 /**
  * @brief		Nó forma-pagamento

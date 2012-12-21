@@ -5,18 +5,20 @@
  * @package		dso.cielo
  */
 
-require_once 'dso/cielo/PaymentProduct.php';
-require_once 'dso/cielo/nodes/PaymentMethodNode.php';
-require_once 'dso/cielo/nodes/OrderDataNode.php';
-require_once 'dso/cielo/nodes/EcDataNode.php';
-require_once 'dso/cielo/nodes/CardDataNode.php';
-require_once 'dso/cielo/request/AuthorizationRequest.php';
-require_once 'dso/cielo/request/TransactionRequest.php';
-require_once 'dso/cielo/request/CancellationRequest.php';
-require_once 'dso/cielo/request/CaptureRequest.php';
-require_once 'dso/cielo/request/QueryRequest.php';
-require_once 'dso/cielo/request/TIDRequest.php';
-require_once 'dso/http/CURL.php';
+require_once(dirname(__FILE__) . '/CreditCard.php');
+require_once(dirname(__FILE__) . '/CieloMode.php');
+require_once(dirname(__FILE__) . '/PaymentProduct.php');
+require_once(dirname(__FILE__) . '/nodes/PaymentMethodNode.php');
+require_once(dirname(__FILE__) . '/nodes/OrderDataNode.php');
+require_once(dirname(__FILE__) . '/nodes/EcDataNode.php');
+require_once(dirname(__FILE__) . '/nodes/CardDataNode.php');
+require_once(dirname(__FILE__) . '/request/AuthorizationRequest.php');
+require_once(dirname(__FILE__) . '/request/TransactionRequest.php');
+require_once(dirname(__FILE__) . '/request/CancellationRequest.php');
+require_once(dirname(__FILE__) . '/request/CaptureRequest.php');
+require_once(dirname(__FILE__) . '/request/QueryRequest.php');
+require_once(dirname(__FILE__) . '/request/TIDRequest.php');
+require_once(dirname(__FILE__) . '/../http/CURL.php');
 
 /**
  * Builder para criação dos objetos da integração com a Cielo

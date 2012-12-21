@@ -5,7 +5,7 @@
  * @package		dso.cielo.nodes
  */
 
-require_once 'dso/cielo/nodes/TransactionNode.php';
+require_once(dirname(__FILE__) . '/TransactionNode.php');
 
 /**
  * @brief		Nó autenticacao

@@ -5,7 +5,7 @@
  * @package		dso.cielo.nodes
  */
 
-require_once 'dso/cielo/nodes/XMLNode.php';
+require_once(dirname(__FILE__) . '/XMLNode.php');
 
 /**
  * @brief		Nó dados-portador

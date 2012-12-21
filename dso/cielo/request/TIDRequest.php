@@ -5,8 +5,8 @@
  * @package		dso.cielo.request
  */
 
-require_once 'dso/cielo/nodes/AbstractCieloNode.php';
-require_once 'dso/cielo/Transaction.php';
+require_once(dirname(__FILE__) . '/../nodes/AbstractCieloNode.php');
+require_once(dirname(__FILE__) . '/../Transaction.php');
 
 /**
  * @brief		Requisição de TID para uma requisição de autorização direta
