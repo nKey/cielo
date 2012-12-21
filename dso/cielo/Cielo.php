@@ -155,10 +155,10 @@ class Cielo {
 	 * @param	string $orderNumber Número identificador do pedido
 	 * @param	integer $orderValue Valor do pedido
 	 * @param	string $paymentProduct Forma de pagamento do pedido, pode ser uma das seguintes:
-	 * @li	PaymentMethod::ONE_TIME_PAYMENT - <b>1</b> - Crédito à Vista
-	 * @li	PaymentMethod::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
-	 * @li	PaymentMethod::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
-	 * @li	PaymentMethod::DEBIT - <b>A</b> - Débito
+	 * @li	PaymentProduct::ONE_TIME_PAYMENT - <b>1</b> - Crédito à Vista
+	 * @li	PaymentProduct::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
+	 * @li	PaymentProduct::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
+	 * @li	PaymentProduct::DEBIT - <b>A</b> - Débito
 	 * @param $parcels integer Número de parcelas do pedido.
 	 * @attention Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito), $parcelas precisa, <b>necessariamente</b>
 	 * ser igual a <b>1</b>
@@ -261,10 +261,10 @@ class Cielo {
 	 * @brief	Cria um objeto de requisição de TID
 	 * @param	string $creditCard Tipo do cartão
 	 * @param	string $paymentProduct Forma de pagamento do pedido, pode ser uma das seguintes:
-	 * @li	PaymentMethod::ONE_TIME_PAYMENT - <b>1</b> - Crédito à Vista
-	 * @li	PaymentMethod::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
-	 * @li	PaymentMethod::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
-	 * @li	PaymentMethod::DEBIT - <b>A</b> - Débito
+	 * @li	PaymentProduct::ONE_TIME_PAYMENT - <b>1</b> - Crédito à Vista
+	 * @li	PaymentProduct::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
+	 * @li	PaymentProduct::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
+	 * @li	PaymentProduct::DEBIT - <b>A</b> - Débito
 	 * @param $parcels integer Número de parcelas do pedido.
 	 * @attention Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito), $parcelas precisa, <b>necessariamente</b>
 	 * ser igual a <b>1</b>
@@ -292,10 +292,10 @@ class Cielo {
 	 * @param	string $orderNumber Número identificador do pedido
 	 * @param	integer $orderValue Valor do pedido
 	 * @param	string $paymentProduct Forma de pagamento do pedido, pode ser uma das seguintes:
-	 * @li	PaymentMethod::ONE_TIME_PAYMENT - <b>1</b> - Crédito à Vista
-	 * @li	PaymentMethod::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
-	 * @li	PaymentMethod::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
-	 * @li	PaymentMethod::DEBIT - <b>A</b> - Débito
+	 * @li	PaymentProduct::ONE_TIME_PAYMENT - <b>1</b> - Crédito à Vista
+	 * @li	PaymentProduct::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
+	 * @li	PaymentProduct::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
+	 * @li	PaymentProduct::DEBIT - <b>A</b> - Débito
 	 * @param $parcels integer Número de parcelas do pedido.
 	 * @attention Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito), $parcelas precisa, <b>necessariamente</b>
 	 * ser igual a <b>1</b>

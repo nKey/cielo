@@ -29,7 +29,7 @@ class PaymentMethodNode implements XMLNode {
 	 * @li	3 - Parcelado administradora
 	 * @li	A - Débito
 	 * @var		string
-	 * @see		PaymentMethod
+	 * @see		PaymentProduct
 	 */
 	private $product;
 
@@ -48,7 +48,7 @@ class PaymentMethodNode implements XMLNode {
 	 * @li A Débito
 	 * @param	integer $parcels Número de parcelas. Para crédito à vista ou Débito, utilizar 1.
 	 * @param	string $creditCard Bandeira do cartão
-	 * @see		PaymentMethod
+	 * @see		PaymentProduct
 	 * @see		CreditCard
 	 * @throws	UnexpectedValueException Se $parcels não for um inteiro, maior ou igual a 1
 	 * @throws	InvalidArgumentException Se o número de parcelas for diferente de 1 para crédito à vista ou débito
@@ -113,7 +113,7 @@ class PaymentMethodNode implements XMLNode {
 	 * @li	3 - Parcelado administradora
 	 * @li	A - Débito
 	 * @return	string
-	 * @see		PaymentMethod
+	 * @see		PaymentProduct
 	 */
 	public function getProduct() {
 		return $this->product;
