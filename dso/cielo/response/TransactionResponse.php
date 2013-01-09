@@ -15,9 +15,9 @@ require_once(dirname(__FILE__) . '/nodes/PaymentMethodNode.php');
 /**
  * Retorno de uma Requisição ao webservice da Cielo
  * @ingroup		Cielo
- * @class		Transaction
+ * @class		TransactionResponse
  */
-class Transaction {
+class TransactionResponse {
 	/**
 	 * Dados de autenticação
 	 * @var AuthenticationNode

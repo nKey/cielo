@@ -6,7 +6,7 @@
  */
 
 require_once(dirname(__FILE__) . '/XMLNode.php');
-require_once(dirname(__FILE__) . '/../PaymentProduct.php');
+require_once(dirname(__FILE__) . '/../constants/PaymentProduct.php');
 
 /**
  * @brief		Nó forma-pagamento

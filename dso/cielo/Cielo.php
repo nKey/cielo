@@ -5,9 +5,9 @@
  * @package		dso.cielo
  */
 
-require_once(dirname(__FILE__) . '/CreditCard.php');
-require_once(dirname(__FILE__) . '/CieloMode.php');
-require_once(dirname(__FILE__) . '/PaymentProduct.php');
+require_once(dirname(__FILE__) . '/constants/CreditCard.php');
+require_once(dirname(__FILE__) . '/constants/CieloMode.php');
+require_once(dirname(__FILE__) . '/constants/PaymentProduct.php');
 require_once(dirname(__FILE__) . '/nodes/PaymentMethodNode.php');
 require_once(dirname(__FILE__) . '/nodes/OrderDataNode.php');
 require_once(dirname(__FILE__) . '/nodes/EcDataNode.php');

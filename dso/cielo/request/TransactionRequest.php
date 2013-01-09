@@ -6,7 +6,7 @@
  */
 
 require_once(dirname(__FILE__) . '/../nodes/AbstractCieloNode.php');
-require_once(dirname(__FILE__) . '/../Transaction.php');
+require_once(dirname(__FILE__) . '/../response/TransactionResponse.php');
 
 /**
  * @brief		Requisição de transação.
@@ -114,11 +114,11 @@ class TransactionRequest extends AbstractCieloNode {
 
 	/**
 	 * Faz a chamada da requisição de autenticação no webservice da Cielo
-	 * @return	Transaction
+	 * @return	TransactionResponse
 	 * @see		Cielo::call()
 	 */
 	public function call() {
-		return new Transaction( parent::call() );
+		return new TransactionResponse( parent::call() );
 	}
 
 	/**
