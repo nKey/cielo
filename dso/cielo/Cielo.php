@@ -12,12 +12,10 @@ require_once(dirname(__FILE__) . '/nodes/PaymentMethodNode.php');
 require_once(dirname(__FILE__) . '/nodes/OrderDataNode.php');
 require_once(dirname(__FILE__) . '/nodes/EcDataNode.php');
 require_once(dirname(__FILE__) . '/nodes/CardDataNode.php');
-require_once(dirname(__FILE__) . '/request/AuthorizationRequest.php');
 require_once(dirname(__FILE__) . '/request/TransactionRequest.php');
 require_once(dirname(__FILE__) . '/request/CancellationRequest.php');
 require_once(dirname(__FILE__) . '/request/CaptureRequest.php');
 require_once(dirname(__FILE__) . '/request/QueryRequest.php');
-require_once(dirname(__FILE__) . '/request/TIDRequest.php');
 require_once(dirname(__FILE__) . '/../http/CURL.php');
 
 /**
@@ -93,15 +91,15 @@ class Cielo {
 				throw new InvalidArgumentException( 'Modo inválido' );
 		}
 
-		if (  !is_null( $returnURL ) ) {
+		if ( !is_null( $returnURL ) ) {
 			$this->setReturnURL( $returnURL );
 		}
 
-		if (  !is_null( $affiliationCode ) ) {
+		if ( !is_null( $affiliationCode ) ) {
 			$this->setAffiliationCode( $affiliationCode );
 		}
 
-		if (  !is_null( $affiliationKey ) ) {
+		if ( !is_null( $affiliationKey ) ) {
 			$this->setAffiliationKey( $affiliationKey );
 		}
 	}
@@ -146,7 +144,6 @@ class Cielo {
 
 	/**
 	 * Cria um objeto de requisição de autorização da transacao
-	 * @param	string $tid ID da transação
 	 * @param	string $creditCard Tipo do cartão
 	 * @param	string $cardNumber Número do cartão de crédito
 	 * @param	integer $cardExpiration Data de expiração do cartão no formato <b>yyyymm</b>
@@ -163,33 +160,30 @@ class Cielo {
 	 * @attention Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito), $parcelas precisa, <b>necessariamente</b>
 	 * ser igual a <b>1</b>
 	 * @param	string $freeField Um valor qualquer que poderá ser enviado à Cielo para ser resgatado posteriormente
-	 * @return	AuthorizationRequest
+	 * @return	TransactionRequest
 	 * @throws	UnexpectedValueException Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito) e o número de parcelas
 	 * for diferente de 1
 	 */
-	final public function buildAuthorizationRequest( $tid , $creditCard , $cardNumber , $cardExpiration , $indicator , $securityCode , $orderNumber , $orderValue , $paymentProduct , $parcels = 1 , $freeField = null ) {
+	final public function buildTransaction( $creditCard , $cardNumber , $cardExpiration , $indicator , $securityCode , $orderNumber , $orderValue , $paymentProduct , $parcels = 1 , $freeField = null ) {
 		if ( ( ( $paymentProduct == PaymentProduct::ONE_TIME_PAYMENT ) || ( $paymentProduct == PaymentProduct::DEBIT ) ) && ( $parcels != 1 ) ) {
-			throw new UnexpectedValueException( 'Quando a forma de pagamento é Crédito à vista ou Débito, o número de parcelas deve ser 1' );
+			throw new UnexpectedValueException( 'Quando a forma de pagamento é crédito à vista ou débito, o número de parcelas deve ser 1' );
 		} else {
-			if ( $creditCard == CreditCard::MASTERCARD && $indicator != 1 ) {
-				throw new UnexpectedValueException( 'Quando o cartão é MasterCard, o indicador deve ser 1' );
-			}
 
-			if ( $indicator == 1 && !preg_match( '/^[0-9]{3}$/' , (string) $securityCode ) ){
+			if ( $indicator == 1 && !preg_match( '/^[0-9]{3,4}$/' , (string) $securityCode ) ){
 				throw new UnexpectedValueException( 'Quando o indicador de segurança é 1, o código de segurança deve ser informado' );
 			}
 
 			if ( is_int( $orderValue ) || is_float( $orderValue ) ) {
-				$this->transaction = new AuthorizationRequest( $this->getHTTPRequester() );
+				$this->transaction = new TransactionRequest( $this->getHTTPRequester() );
 				$this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
 				$this->transaction->addNode( new CardDataNode( $cardNumber , $cardExpiration , $indicator , $securityCode ) );
 				$this->transaction->addNode( new OrderDataNode( $orderNumber , $orderValue ) );
 				$this->transaction->addNode( new PaymentMethodNode( $paymentProduct , $parcels , $creditCard ) );
 				$this->transaction->setCapture( $this->automaticCapture );
+				$this->transaction->setReturnURL( $this->returnURL );
 				$this->transaction->setURL( $this->cieloURL );
-				$this->transaction->setTID( $tid );
 
-				if (  !is_null( $freeField ) ) {
+				if ( !is_null( $freeField ) ) {
 					$this->transaction->setFreeField( $freeField );
 				}
 
@@ -232,7 +226,7 @@ class Cielo {
 			$this->transaction->setTID( $tid );
 			$this->transaction->setURL( $this->cieloURL );
 
-			if (  !$nullValue ) {
+			if ( !$nullValue ) {
 				$this->transaction->setValue( $value );
 			}
 
@@ -255,78 +249,6 @@ class Cielo {
 		$this->transaction->setURL( $this->cieloURL );
 
 		return $this->transaction;
-	}
-
-	/**
-	 * @brief	Cria um objeto de requisição de TID
-	 * @param	string $creditCard Tipo do cartão
-	 * @param	string $paymentProduct Forma de pagamento do pedido, pode ser uma das seguintes:
-	 * @li	PaymentProduct::ONE_TIME_PAYMENT - <b>1</b> - Crédito à Vista
-	 * @li	PaymentProduct::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
-	 * @li	PaymentProduct::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
-	 * @li	PaymentProduct::DEBIT - <b>A</b> - Débito
-	 * @param $parcels integer Número de parcelas do pedido.
-	 * @attention Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito), $parcelas precisa, <b>necessariamente</b>
-	 * ser igual a <b>1</b>
-	 * @return	TIDRequest
-	 * @throws	UnexpectedValueException Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito) e o número de parcelas
-	 * for diferente de 1
-	 */
-	final public function buildTIDRequest( $creditCard , $paymentProduct , $parcels = 1 ) {
-		if ( ( ( $paymentProduct == PaymentProduct::ONE_TIME_PAYMENT ) || ( $paymentProduct == PaymentProduct::DEBIT ) ) && ( $parcels != 1 ) ) {
-			throw new UnexpectedValueException( 'Quando a forma de pagamento é Crédito à vista ou Débito, o número de parcelas deve ser 1' );
-		} else {
-			$this->transaction = new TIDRequest( $this->getHTTPRequester() );
-			$this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
-			$this->transaction->addNode( new PaymentMethodNode( $paymentProduct , $parcels , $creditCard ) );
-			$this->transaction->setURL( $this->cieloURL );
-
-			return $this->transaction;
-		}
-	}
-
-	/**
-	 * @brief	Cria um objeto de requisição de transacao
-	 * @details Constroi um objeto de requisição de transação para autenticação
-	 * @param	string $creditCard Tipo do cartão
-	 * @param	string $orderNumber Número identificador do pedido
-	 * @param	integer $orderValue Valor do pedido
-	 * @param	string $paymentProduct Forma de pagamento do pedido, pode ser uma das seguintes:
-	 * @li	PaymentProduct::ONE_TIME_PAYMENT - <b>1</b> - Crédito à Vista
-	 * @li	PaymentProduct::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
-	 * @li	PaymentProduct::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
-	 * @li	PaymentProduct::DEBIT - <b>A</b> - Débito
-	 * @param $parcels integer Número de parcelas do pedido.
-	 * @attention Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito), $parcelas precisa, <b>necessariamente</b>
-	 * ser igual a <b>1</b>
-	 * @param	string $freeField Um valor qualquer que poderá ser enviado à Cielo para ser resgatado posteriormente
-	 * @return	TransactionRequest
-	 * @throws	UnexpectedValueException Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito) e o número de parcelas
-	 * for diferente de 1
-	 */
-	final public function buildTransactionRequest( $creditCard , $orderNumber , $orderValue , $paymentProduct , $parcels = 1 , $freeField = null ) {
-		if ( ( ( $paymentProduct == PaymentProduct::ONE_TIME_PAYMENT ) || ( $paymentProduct == PaymentProduct::DEBIT ) ) && ( $parcels != 1 ) ) {
-			throw new UnexpectedValueException( 'Quando a forma de pagamento é Crédito à vista ou Débito, o número de parcelas deve ser 1' );
-		} else {
-			if ( is_int( $orderValue ) || is_float( $orderValue ) ) {
-				$this->transaction = new TransactionRequest( $this->getHTTPRequester() );
-				$this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
-				$this->transaction->addNode( new OrderDataNode( $orderNumber , $orderValue ) );
-				$this->transaction->addNode( new PaymentMethodNode( $paymentProduct , $parcels , $creditCard ) );
-				$this->transaction->setReturnURL( $this->getReturnURL() );
-				$this->transaction->setCapture( $this->automaticCapture );
-
-				if (  !is_null( $freeField ) ) {
-					$this->transaction->setFreeField( $freeField );
-				}
-
-				$this->transaction->setURL( $this->cieloURL );
-
-				return $this->transaction;
-			} else {
-				throw new UnexpectedValueException( sprintf( 'O valor do pedido deve ser numérico, %s foi dado.' , gettype( $orderValue ) ) );
-			}
-		}
 	}
 
 	/**
@@ -374,7 +296,7 @@ class Cielo {
 	 * @return	string
 	 */
 	public function getReturnURL() {
-		if (  !is_null( $this->returnURL ) ) {
+		if ( !is_null( $this->returnURL ) ) {
 			return $this->returnURL;
 		} else {
 			throw new BadMethodCallException( 'Ainda não foi definido a URL de retorno' );

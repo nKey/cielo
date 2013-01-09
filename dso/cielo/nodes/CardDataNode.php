@@ -71,7 +71,7 @@ class CardDataNode implements XMLNode {
 	 * @see		XMLNode::createXMLNode()
 	 */
 	public function createXMLNode() {
-		$node = '<dados-cartao>';
+		$node = '<dados-portador>';
 
 		$node .= sprintf( '<numero>%s</numero>' , $this->cardNumber );
 		$node .= sprintf( '<validade>%s</validade>' , $this->cardExpiration );
@@ -85,7 +85,7 @@ class CardDataNode implements XMLNode {
 			$node .= sprintf( '<nome-portador>%s</nome-portador>' , $this->holderName );
 		}
 
-		$node .= '</dados-cartao>';
+		$node .= '</dados-portador>';
 
 		return $node;
 	}

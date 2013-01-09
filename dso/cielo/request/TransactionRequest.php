@@ -81,7 +81,7 @@ class TransactionRequest extends AbstractCieloNode {
 	 * @throws	BadMethodCallException Se os dados do pedido não tiver sido especificado
 	 */
 	public function createXMLNode() {
-		if (  !empty( $this->returnURL ) ) {
+		if ( !empty( $this->returnURL ) || $this->authorize == 3 ) {
 			$dom = new DOMDocument( '1.0' , 'UTF-8' );
 			$dom->loadXML( parent::createXMLNode() );
 			$dom->encoding = 'UTF-8';
@@ -99,7 +99,7 @@ class TransactionRequest extends AbstractCieloNode {
 				$dom->childNodes->item( 0 )->appendChild( $dom->createElement( 'autorizar' , $this->authorize ) );
 				$dom->childNodes->item( 0 )->appendChild( $dom->createElement( 'capturar' , $this->capture ? 'true' : 'false' ) );
 
-				if (  !is_null( $this->freeField ) ) {
+				if ( !is_null( $this->freeField ) ) {
 					$dom->childNodes->item( 0 )->appendChild( $dom->createElement( 'campo-livre' , $this->freeField ) );
 				}
 
