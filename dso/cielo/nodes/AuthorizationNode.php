@@ -6,6 +6,7 @@
  */
 
 require_once(dirname(__FILE__) . '/TransactionNode.php');
+require_once(dirname(__FILE__) . '/../AuthorizationStatus.php');
 
 /**
  * @brief		Nó autorizacao
@@ -70,5 +71,49 @@ class AuthorizationNode extends TransactionNode {
 	 */
 	public function getArp() {
 		return $this->arp;
+	}
+
+	/**
+	 * Define o código HTTP a partir do retorno da autorização (LR)
+	 * @return	integer
+	 */
+	public function getHTTPStatusCode() {
+        switch ($this->lr) {
+            // Success
+            case AuthorizationStatus::TRANSACTION_AUTHORIZED:
+                return 200; // OK
+            // Client error (transaction can be repeated)
+            case AuthorizationStatus::BANK_UNAVAILABLE:
+            case AuthorizationStatus::CARD_BLOCKED:
+            case AuthorizationStatus::NO_FUNDS:
+            case AuthorizationStatus::TRY_AGAIN_1:
+            case AuthorizationStatus::TRY_AGAIN_2:
+            case AuthorizationStatus::TRY_AGAIN_3:
+            case AuthorizationStatus::TRY_AGAIN_4:
+                return 402; // Payment Required
+            // Error (transaction should not be repeated)
+            case AuthorizationStatus::CARD_EXPIRED:
+            case AuthorizationStatus::CARD_INVALID:
+            case AuthorizationStatus::ISSUER_INVALID:
+            case AuthorizationStatus::VALUE_INVALID:
+            case AuthorizationStatus::SECURITY_CODE_INVALID:
+            case AuthorizationStatus::CARD_RESTRICTED_1:
+            case AuthorizationStatus::CARD_RESTRICTED_2:
+            case AuthorizationStatus::CARD_RESTRICTED_3:
+            case AuthorizationStatus::CARD_RESTRICTED_4:
+            case AuthorizationStatus::CARD_RESTRICTED_5:
+            case AuthorizationStatus::TRANSACTION_INVALID_1:
+            case AuthorizationStatus::TRANSACTION_INVALID_2:
+            case AuthorizationStatus::TRANSACTION_NOT_ALLOWED_1:
+            case AuthorizationStatus::TRANSACTION_NOT_ALLOWED_2:
+            case AuthorizationStatus::TRANSACTION_UNAUTHORIZED:
+            case AuthorizationStatus::TRANSACTION_DENIED_BY_ISSUER:
+            case AuthorizationStatus::TRANSACTION_DENIED_BY_CIELO:
+            case AuthorizationStatus::DEBIT_ONLY:
+                return 403; // Forbidden
+            // Server error (unknown status code)
+            default:
+                return 502; // Bad Gateway
+        }
 	}
 }
