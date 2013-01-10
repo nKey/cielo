@@ -7,7 +7,7 @@
 
 /**
  * @brief	Códigos de Resposta da Autorização (LR)
- * @details	A seguir estão os coóigos de resposta que respondem por 99,9% dos retornos gerados no processo de autorização. Outros códigos podem ser enviados, para estes casos deve-se assumir que eles não são passíveis de retentativa.
+ * @details	A seguir estão os códigos de resposta que respondem por 99,9% dos retornos gerados no processo de autorização. Outros códigos podem ser enviados, para estes casos deve-se assumir que eles não são passíveis de retentativa.
  * @li	00 - Transação autorizada
  * @li	01 - Transação referida pelo emissor
  * @li	04 - Cartão com restrição
