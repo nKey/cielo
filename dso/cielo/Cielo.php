@@ -315,6 +315,9 @@ class Cielo {
 	public function setReturnURL( $url ) {
 		if ( filter_var( $url , FILTER_VALIDATE_URL ) ) {
 			$this->returnURL = & $url;
+			if ( $this->transaction instanceof TransactionRequest ) {
+				$this->transaction->setReturnURL( $url );
+			}
 		} else {
 			throw new InvalidArgumentException( 'URL de retorno inválida' );
 		}
