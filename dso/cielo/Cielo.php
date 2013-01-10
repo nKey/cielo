@@ -149,23 +149,25 @@ class Cielo {
 	 * @param   integer $parcels Número de parcelas do pedido.
 	 * @attention Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito), $parcelas precisa, <b>necessariamente</b>
 	 * ser igual a <b>1</b>
+	 * @param	string $holderName Nome impresso no cartão
+	 * @param	string $orderCurrency Código numérico da moeda na norma ISO 4217 (Real: 986)
+	 * @param	string $orderDateTime Data hora do pedido no formato ISO 8601
+	 * @param	string $orderLanguage Idioma do pedido: PT (português), EN (inglês) ou ES (espanhol)
+	 * @param	string $orderDescription Descrição do pedido
+	 * @param	string $orderSoftDescriptor Texto de até 13 caracteres que será exibido na fatura do portador, após o nome do Estabelecimento Comercial
 	 * @param	string $freeField Um valor qualquer que poderá ser enviado à Cielo para ser resgatado posteriormente
 	 * @return	TransactionRequest
 	 * @throws	UnexpectedValueException Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito) e o número de parcelas
 	 * for diferente de 1
 	 */
-	final public function buildTransaction( $creditCard , $cardNumber , $cardExpiration , $indicator , $securityCode , $orderNumber , $orderValue , $paymentProduct , $parcels = 1 , $freeField = null ) {
+	final public function buildTransaction( $creditCard , $cardNumber , $cardExpiration , $indicator , $securityCode , $orderNumber , $orderValue , $paymentProduct , $parcels = 1 , $holderName = null , $currency = 986 , $dateTime = null , $language = 'PT' , $description = null , $softDescriptor = null , $freeField = null ) {
 		$this->transaction = new TransactionRequest( $this->getHTTPRequester() );
 		$this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
-		$this->transaction->addNode( new CardDataNode( $cardNumber , $cardExpiration , $indicator , $securityCode ) );
-		$this->transaction->addNode( new OrderDataNode( $orderNumber , $orderValue ) );
+		$this->transaction->addNode( new CardDataNode( $cardNumber , $cardExpiration , $indicator , $securityCode , $holderName ) );
+		$this->transaction->addNode( new OrderDataNode( $orderNumber , $orderValue , $currency , $dateTime , $language , $description , $softDescriptor ) );
 		$this->transaction->addNode( new PaymentMethodNode( $paymentProduct , $parcels , $creditCard ) );
 		$this->transaction->setReturnURL( $this->returnURL );
 		$this->transaction->setURL( $this->cieloURL );
-
-		if ( !is_null( $freeField ) ) {
-			$this->transaction->setFreeField( $freeField );
-		}
 
 		return $this->transaction;
 	}

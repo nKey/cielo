@@ -16,6 +16,24 @@ require_once(dirname(__FILE__) . '/XMLNode.php');
  */
 class OrderDataNode implements XMLNode {
 	/**
+	 * Número do pedido da loja
+	 * @var		string
+	 */
+	private $orderNumber;
+
+	/**
+	 * Valor do pedido
+	 * @var		integer
+	 */
+	private $orderValue;
+
+	/**
+	 * Código numérico da moeda na ISO 4217. Para o Real, o código é 986
+	 * @var		integer
+	 */
+	private $currency;
+
+	/**
 	 * Data hora do pedido.
 	 * @var		string
 	 */
@@ -31,22 +49,16 @@ class OrderDataNode implements XMLNode {
 	private $language;
 
 	/**
-	 * Código numérico da moeda na ISO 4217. Para o Real, o código é 986.
-	 * @var		integer
-	 */
-	private $currency;
-
-	/**
-	 * Número do pedido da loja.
+	 * Descrição do pedido
 	 * @var		string
 	 */
-	private $orderNumber;
+	private $description;
 
 	/**
-	 * Valor do pedido
-	 * @var		integer
+	 * Texto de até 13 caracteres que será exibido na fatura do portador, após o nome do Estabelecimento Comercial
+	 * @var		string
 	 */
-	private $orderValue;
+	private $softDescriptor;
 
 	/**
 	 * Constroi o objeto que representa os dados do pedido
@@ -60,7 +72,7 @@ class OrderDataNode implements XMLNode {
 	 * @li ES - espanhol
 	 * Com base nessa informação é definida a língua a ser utilizada nas telas da Cielo. <b>Caso não preenchido, assume-se PT</b>.
 	 */
-	public function __construct( $orderNumber , $orderValue , $currency = 986 , $dateTime = null , $language = 'PT' ) {
+	public function __construct( $orderNumber , $orderValue , $currency = 986 , $dateTime = null , $language = 'PT' , $description = null , $softDescriptor = null ) {
 
 		if ( !is_int( $orderValue ) ) {
 			throw new InvalidArgumentException( sprintf( 'O valor do pedido deve ser um número inteiro, %s foi dado.' , gettype( $orderValue ) ) );
@@ -86,6 +98,9 @@ class OrderDataNode implements XMLNode {
 
 		$this->language = $language;
 		$this->dateTime = $dateTime;
+
+		$this->description = $description;
+		$this->softDescriptor = substr($softDescriptor, 0, 13);
 	}
 
 	/**
@@ -96,27 +111,59 @@ class OrderDataNode implements XMLNode {
 	public function createXMLNode() {
 		$node = '<dados-pedido>';
 
-		if (  !empty( $this->orderNumber ) ) {
+		if ( !empty( $this->orderNumber ) ) {
 			$node .= sprintf( '<numero>%s</numero>' , $this->orderNumber );
 		}
 
-		if (  !empty( $this->orderValue ) ) {
+		if ( !empty( $this->orderValue ) ) {
 			$node .= sprintf( '<valor>%s</valor>' , $this->orderValue );
 		}
 
-		if (  !empty( $this->currency ) ) {
+		if ( !empty( $this->currency ) ) {
 			$node .= sprintf( '<moeda>%s</moeda>' , $this->currency );
 		}
 
 		$node .= sprintf( '<data-hora>%s</data-hora>' , $this->dateTime );
 
-		if (  !empty( $this->language ) ) {
+		if ( !empty( $this->language ) ) {
 			$node .= sprintf( '<idioma>%s</idioma>' , $this->language );
+		}
+
+		if ( !empty( $this->description ) ) {
+			$node .= sprintf( '<descricao>%s</descricao>' , $this->description );
+		}
+
+		if ( !empty( $this->softDescriptor ) ) {
+			$node .= sprintf( '<soft-descriptor>%s</soft-descriptor>' , $this->softDescriptor );
 		}
 
 		$node .= '</dados-pedido>';
 
 		return $node;
+	}
+
+	/**
+	 * Recupera o número do pedido da loja
+	 * @return	string
+	 */
+	public function getOrderNumber() {
+		return $this->orderNumber;
+	}
+
+	/**
+	 * Recupera o valor do pedido
+	 * @return	float
+	 */
+	public function getOrderValue() {
+		return $this->orderValue;
+	}
+
+	/**
+	 * Código numérico da moeda na ISO 4217. Para o Real, o código é 986.
+	 * @return	integer
+	 */
+	public function getCurrency() {
+		return $this->currency;
 	}
 
 	/**
@@ -139,26 +186,18 @@ class OrderDataNode implements XMLNode {
 	}
 
 	/**
-	 * Código numérico da moeda na ISO 4217. Para o Real, o código é 986.
-	 * @return	integer
-	 */
-	public function getCurrency() {
-		return $this->currency;
-	}
-
-	/**
-	 * Recupera o número do pedido da loja
+	 * Recupera a descrição do pedido
 	 * @return	string
 	 */
-	public function getOrderNumber() {
-		return $this->orderNumber;
+	public function getDescription() {
+		return $this->description;
 	}
 
 	/**
-	 * Recupera o valor do pedido
-	 * @return	float
+	 * Recupera o soft descriptor
+	 * @return	string
 	 */
-	public function getOrderValue() {
-		return $this->orderValue;
+	public function getSoftDescriptor() {
+		return $this->softDescriptor;
 	}
 }
