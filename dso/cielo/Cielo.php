@@ -26,11 +26,6 @@ require_once(dirname(__FILE__) . '/../http/CURL.php');
  */
 class Cielo {
 	/**
-	 * @var	boolean
-	 */
-	private $automaticCapture = false;
-
-	/**
 	 * @var	HTTPRequest
 	 */
 	private $httpRequester;
@@ -134,16 +129,6 @@ class Cielo {
 	}
 
 	/**
-	 * Define que a captura será feita automaticamente, por padrão a captura é manual.
-	 * @return	Cielo
-	 */
-	public function automaticCapture() {
-		$this->automaticCapture = true;
-
-		return $this;
-	}
-
-	/**
 	 * Cria um objeto de requisição de autorização da transacao
 	 * @param	string $creditCard Tipo do cartão
 	 * @param	string $cardNumber Número do cartão de crédito
@@ -175,7 +160,6 @@ class Cielo {
 		$this->transaction->addNode( new CardDataNode( $cardNumber , $cardExpiration , $indicator , $securityCode ) );
 		$this->transaction->addNode( new OrderDataNode( $orderNumber , $orderValue ) );
 		$this->transaction->addNode( new PaymentMethodNode( $paymentProduct , $parcels , $creditCard ) );
-		$this->transaction->setCapture( $this->automaticCapture );
 		$this->transaction->setReturnURL( $this->returnURL );
 		$this->transaction->setURL( $this->cieloURL );
 

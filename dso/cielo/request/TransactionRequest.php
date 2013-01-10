@@ -66,7 +66,7 @@ class TransactionRequest extends AbstractCieloNode {
 	 * Define se a transação será automaticamente capturada caso seja autorizada.
 	 * @var		boolean
 	 */
-	private $capture = false;
+	private $automaticCapture = true;
 
 	/**
 	 * @brief	URL da página de retorno.
@@ -99,7 +99,7 @@ class TransactionRequest extends AbstractCieloNode {
 
 				$dom->childNodes->item( 0 )->appendChild( $dom->createElement( 'url-retorno' , $this->returnURL ) );
 				$dom->childNodes->item( 0 )->appendChild( $dom->createElement( 'autorizar' , $this->authorize ) );
-				$dom->childNodes->item( 0 )->appendChild( $dom->createElement( 'capturar' , $this->capture ? 'true' : 'false' ) );
+				$dom->childNodes->item( 0 )->appendChild( $dom->createElement( 'capturar' , $this->automaticCapture ? 'true' : 'false' ) );
 
 				if ( !is_null( $this->freeField ) ) {
 					$dom->childNodes->item( 0 )->appendChild( $dom->createElement( 'campo-livre' , $this->freeField ) );
@@ -191,14 +191,14 @@ class TransactionRequest extends AbstractCieloNode {
 	/**
 	 * @brief	Define se será feita a captura automática.
 	 * @details	Define se a transação será automaticamente capturada caso seja autorizada.
-	 * @param	boolean $capture TRUE ou FALSE
+	 * @param	boolean $automaticCapture TRUE ou FALSE
 	 * @throws	InvalidArgumentException Se $capturar não for um boolean
 	 */
-	public function setCapture( $capture = true ) {
-		if ( is_bool( $capture ) ) {
-			$this->capture = $capture;
+	public function setAutomaticCapture( $automaticCapture ) {
+		if ( is_bool( $automaticCapture ) ) {
+			$this->automaticCapture = $automaticCapture;
 		} else {
-			throw new InvalidArgumentException( '$capture precisa ser um boolean' );
+			throw new InvalidArgumentException( '$automaticCapture precisa ser um boolean' );
 		}
 	}
 
