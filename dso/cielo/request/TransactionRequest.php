@@ -151,7 +151,7 @@ class TransactionRequest extends AbstractCieloNode {
 	 * @throws	InvalidArgumentException Se o valor informado para $authorize não for um dos descritos acima
 	 */
 	public function setAuthorization( $authorize = AuthorizationIndicator::AUTHORIZE_DIRECTLY) {
-		if ( is_int( $authorize ) && ( $authorize >= AuthorizationIndicator::AUTHENTICATE && $authorize <= AuthorizationIndicator::RECURRING_TRANSACTION ) ) {
+		if ( in_array( $authorize, array( AuthorizationIndicator::AUTHENTICATE, AuthorizationIndicator::AUTHORIZE_IF_AUTHENTICATED, AuthorizationIndicator::AUTHORIZE_IF_AUTHENTICATED_OR_NOT, AuthorizationIndicator::AUTHORIZE_DIRECTLY, AuthorizationIndicator::RECURRING_TRANSACTION ) ) ) {
 			$this->authorize = $authorize;
 		} else {
 			throw new InvalidArgumentException( 'Identificador de autorização inválido' );

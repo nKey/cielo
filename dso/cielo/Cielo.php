@@ -8,6 +8,7 @@
 require_once(dirname(__FILE__) . '/constants/CreditCard.php');
 require_once(dirname(__FILE__) . '/constants/CieloMode.php');
 require_once(dirname(__FILE__) . '/constants/PaymentProduct.php');
+require_once(dirname(__FILE__) . '/constants/SecurityCodeIndicator.php');
 require_once(dirname(__FILE__) . '/nodes/PaymentMethodNode.php');
 require_once(dirname(__FILE__) . '/nodes/OrderDataNode.php');
 require_once(dirname(__FILE__) . '/nodes/EcDataNode.php');
@@ -148,6 +149,10 @@ class Cielo {
 	 * @param	string $cardNumber Número do cartão de crédito
 	 * @param	integer $cardExpiration Data de expiração do cartão no formato <b>yyyymm</b>
 	 * @param	integer $indicator Indicador do código de segurança
+ 	 * @li	AuthorizationIndicator::UNINFORMED (0 - Não informado)
+	 * @li	AuthorizationIndicator::INFORMED (1 - Informado)
+	 * @li	AuthorizationIndicator::UNREADABLE (2 - Ilegível)
+	 * @li	AuthorizationIndicator::ABSENT (3 - Inexistente)
 	 * @param	integer $securityCode Código de segurança do cartão
 	 * @param	string $orderNumber Número identificador do pedido
 	 * @param	integer $orderValue Valor do pedido
@@ -156,7 +161,7 @@ class Cielo {
 	 * @li	PaymentProduct::INSTALLMENTS_BY_AFFILIATED_MERCHANTS - <b>2</b> - Parcelado pela loja
 	 * @li	PaymentProduct::INSTALLMENTS_BY_CARD_ISSUERS - <b>3</b> - Parcelado pela administradora
 	 * @li	PaymentProduct::DEBIT - <b>A</b> - Débito
-	 * @param $parcels integer Número de parcelas do pedido.
+	 * @param   integer $parcels Número de parcelas do pedido.
 	 * @attention Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito), $parcelas precisa, <b>necessariamente</b>
 	 * ser igual a <b>1</b>
 	 * @param	string $freeField Um valor qualquer que poderá ser enviado à Cielo para ser resgatado posteriormente
@@ -165,33 +170,20 @@ class Cielo {
 	 * for diferente de 1
 	 */
 	final public function buildTransaction( $creditCard , $cardNumber , $cardExpiration , $indicator , $securityCode , $orderNumber , $orderValue , $paymentProduct , $parcels = 1 , $freeField = null ) {
-		if ( ( ( $paymentProduct == PaymentProduct::ONE_TIME_PAYMENT ) || ( $paymentProduct == PaymentProduct::DEBIT ) ) && ( $parcels != 1 ) ) {
-			throw new UnexpectedValueException( 'Quando a forma de pagamento é crédito à vista ou débito, o número de parcelas deve ser 1' );
-		} else {
+		$this->transaction = new TransactionRequest( $this->getHTTPRequester() );
+		$this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
+		$this->transaction->addNode( new CardDataNode( $cardNumber , $cardExpiration , $indicator , $securityCode ) );
+		$this->transaction->addNode( new OrderDataNode( $orderNumber , $orderValue ) );
+		$this->transaction->addNode( new PaymentMethodNode( $paymentProduct , $parcels , $creditCard ) );
+		$this->transaction->setCapture( $this->automaticCapture );
+		$this->transaction->setReturnURL( $this->returnURL );
+		$this->transaction->setURL( $this->cieloURL );
 
-			if ( $indicator == 1 && !preg_match( '/^[0-9]{3,4}$/' , (string) $securityCode ) ){
-				throw new UnexpectedValueException( 'Quando o indicador de segurança é 1, o código de segurança deve ser informado' );
-			}
-
-			if ( is_int( $orderValue ) || is_float( $orderValue ) ) {
-				$this->transaction = new TransactionRequest( $this->getHTTPRequester() );
-				$this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
-				$this->transaction->addNode( new CardDataNode( $cardNumber , $cardExpiration , $indicator , $securityCode ) );
-				$this->transaction->addNode( new OrderDataNode( $orderNumber , $orderValue ) );
-				$this->transaction->addNode( new PaymentMethodNode( $paymentProduct , $parcels , $creditCard ) );
-				$this->transaction->setCapture( $this->automaticCapture );
-				$this->transaction->setReturnURL( $this->returnURL );
-				$this->transaction->setURL( $this->cieloURL );
-
-				if ( !is_null( $freeField ) ) {
-					$this->transaction->setFreeField( $freeField );
-				}
-
-				return $this->transaction;
-			} else {
-				throw new UnexpectedValueException( sprintf( 'O valor do pedido deve ser numérico, %s foi dado.' , gettype( $orderValue ) ) );
-			}
+		if ( !is_null( $freeField ) ) {
+			$this->transaction->setFreeField( $freeField );
 		}
+
+		return $this->transaction;
 	}
 
 	/**

@@ -28,7 +28,7 @@ class OrderDataNode implements XMLNode {
 	 * @li ES - espanhol
 	 * @var		string
 	 */
-	private $language = 'PT';
+	private $language;
 
 	/**
 	 * Código numérico da moeda na ISO 4217. Para o Real, o código é 986.
@@ -51,7 +51,7 @@ class OrderDataNode implements XMLNode {
 	/**
 	 * Constroi o objeto que representa os dados do pedido
 	 * @param	integer $orderNumber Número do pedido
-	 * @param	float $orderValue Valor do pedido
+	 * @param	integer $orderValue Valor do pedido
 	 * @param	integer $currency Moeda usada no pedido (<b>986</b> para Real R$)
 	 * @param	string $dateTime Data e hora do pedido
 	 * @param	string $language Idioma do pedido:
@@ -61,8 +61,21 @@ class OrderDataNode implements XMLNode {
 	 * Com base nessa informação é definida a língua a ser utilizada nas telas da Cielo. <b>Caso não preenchido, assume-se PT</b>.
 	 */
 	public function __construct( $orderNumber , $orderValue , $currency = 986 , $dateTime = null , $language = 'PT' ) {
+
+		if ( !is_int( $orderValue ) ) {
+			throw new InvalidArgumentException( sprintf( 'O valor do pedido deve ser um número inteiro, %s foi dado.' , gettype( $orderValue ) ) );
+		}
+
+		if ( !is_int( $currency ) ) {
+			throw new InvalidArgumentException( sprintf( 'O código da moeda deve ser um número inteiro, %s foi dado.' , gettype( $currency ) ) );
+		}
+
+		if ( !in_array( $language, array( 'PT', 'EN', 'ES' ) ) ) {
+			throw new InvalidArgumentException( 'Idioma não suportado' );
+		}
+
 		$this->orderNumber = $orderNumber;
-		$this->orderValue = (int) $orderValue;
+		$this->orderValue = $orderValue;
 		$this->currency = $currency;
 
 		if ( is_null( $dateTime ) ) {

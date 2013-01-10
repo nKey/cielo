@@ -27,14 +27,15 @@ class CardDataNode implements XMLNode {
 	private $cardExpiration;
 
 	/**
-	 * Código de segurança do cartão, <b>obrigatório se $indicator = 1</b>
+	 * Código de segurança do cartão, <b>obrigatório se $indicator = SecurityCodeIndicator::INFORMED (1)</b>
 	 * @var	integer
 	 */
 	private $securityCode;
 
 	/**
 	 * Indicador de segurança
-	 * @see	ECI
+	 * @see	SecurityCodeIndicator
+	 * @see ECI
 	 * @var	integer
 	 */
 	private $indicator;
@@ -50,11 +51,20 @@ class CardDataNode implements XMLNode {
 	 * @param string $cardNumber Número do cartão de crédito
 	 * @param integer $cardExpiration Data de expiração do cartão no formato <b>yyyymm</b>
 	 * @param integer $indicator Indicador do código de segurança
+	 * @li	SecurityCodeIndicator::UNINFORMED (0 - Não informado)
+	 * @li	SecurityCodeIndicator::INFORMED (1 - Informado)
+	 * @li	SecurityCodeIndicator::UNREADABLE (2 - Ilegível)
+	 * @li	SecurityCodeIndicator::ABSENT (3 - Inexistente)
 	 * @param integer $securityCode Código de segurança
 	 * @param string $holderName Nome do titular do cartão
 	 */
 	public function __construct( $cardNumber , $cardExpiration , $indicator , $securityCode = null , $holderName = null ) {
-		if ( $indicator == 1 && is_null( $securityCode ) ){
+
+		if ( !in_array( $indicator, array( SecurityCodeIndicator::UNINFORMED, SecurityCodeIndicator::INFORMED, SecurityCodeIndicator::UNREADABLE, SecurityCodeIndicator::ABSENT ) ) ) {
+			throw new InvalidArgumentException( 'Indicador do código de segurança inválido' );
+		}
+
+		if ( $indicator == SecurityCodeIndicator::INFORMED && is_null( $securityCode ) ) {
 			throw new InvalidArgumentException( 'Quando o indicador do código de segurança for 1, o código de segurança deve ser informado' );
 		}
 
@@ -77,11 +87,11 @@ class CardDataNode implements XMLNode {
 		$node .= sprintf( '<validade>%s</validade>' , $this->cardExpiration );
 		$node .= sprintf( '<indicador>%s</indicador>' , $this->indicator );
 
-		if (  !empty( $this->securityCode ) ) {
+		if ( !empty( $this->securityCode ) ) {
 			$node .= sprintf( '<codigo-seguranca>%s</codigo-seguranca>' , $this->securityCode );
 		}
 
-		if (  !empty( $this->holderName ) ) {
+		if ( !empty( $this->holderName ) ) {
 			$node .= sprintf( '<nome-portador>%s</nome-portador>' , $this->holderName );
 		}
 

@@ -269,7 +269,7 @@ class TransactionResponse {
 	 * @param	$element DOMElement Nó autenticacao
 	 */
 	private function parseAuthentication( DOMElement $element = null ) {
-		if (  !is_null( $element ) ) {
+		if ( !is_null( $element ) ) {
 			$codigo = $this->getNodeValue( 'codigo' , $element );
 			$mensagem = $this->getNodeValue( 'mensagem' , $element );
 			$dataHora = $this->getNodeValue( 'data-hora' , $element );
@@ -285,7 +285,7 @@ class TransactionResponse {
 	 * @param	$element DOMElement Nó autorizacao
 	 */
 	private function parseAuthorization( DOMElement $element = null ) {
-		if (  !is_null( $element ) ) {
+		if ( !is_null( $element ) ) {
 			$codigo = $this->getNodeValue( 'codigo' , $element );
 			$mensagem = $this->getNodeValue( 'mensagem' , $element );
 			$dataHora = $this->getNodeValue( 'data-hora' , $element );
@@ -302,14 +302,14 @@ class TransactionResponse {
 	 * @param	$element DOMElement Nó dados-pedido
 	 */
 	private function parseOrderData( DOMElement $element = null ) {
-		if (  !is_null( $element ) ) {
+		if ( !is_null( $element ) ) {
 			$numero = $this->getNodeValue( 'numero' , $element );
 			$valor = $this->getNodeValue( 'valor' , $element );
 			$moeda = $this->getNodeValue( 'moeda' , $element );
 			$dataHora = $this->getNodeValue( 'data-hora' , $element );
 			$idioma = $this->getNodeValue( 'idioma' , $element );
 
-			$this->orderData = new OrderDataNode( $numero , $valor , $moeda , $dataHora , $idioma );
+			$this->orderData = new OrderDataNode( $numero , (int) $valor , (int) $moeda , $dataHora , $idioma );
 		}
 	}
 
@@ -318,7 +318,7 @@ class TransactionResponse {
 	 * @param	$element DOMElement Nó forma-pagamento
 	 */
 	private function parsePaymentMethod( DOMElement $element = null ) {
-		if (  !is_null( $element ) ) {
+		if ( !is_null( $element ) ) {
 			$produto = $this->getNodeValue( 'produto' , $element );
 			$parcelas = $this->getNodeValue( 'parcelas' , $element );
 			$bandeira = $this->getNodeValue( 'bandeira' , $element );
@@ -332,7 +332,7 @@ class TransactionResponse {
 	 * @param	$element DOMElement Nó cancelamento
 	 */
 	private function parseCancellation( DOMElement $element = null ) {
-		if (  !is_null( $element ) ) {
+		if ( !is_null( $element ) ) {
 			$codigo = $this->getNodeValue( 'codigo' , $element );
 			$mensagem = $this->getNodeValue( 'mensagem' , $element );
 			$dataHora = $this->getNodeValue( 'data-hora' , $element );
@@ -347,7 +347,7 @@ class TransactionResponse {
 	 * @param	$element DOMElement Nó captura
 	 */
 	private function parseCapture( DOMElement $element = null ) {
-		if (  !is_null( $element ) ) {
+		if ( !is_null( $element ) ) {
 			$codigo = $this->getNodeValue( 'codigo' , $element );
 			$mensagem = $this->getNodeValue( 'mensagem' , $element );
 			$dataHora = $this->getNodeValue( 'data-hora' , $element );

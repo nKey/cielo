@@ -60,7 +60,7 @@ class PaymentMethodNode implements XMLNode {
 				case PaymentProduct::ONE_TIME_PAYMENT :
 				case PaymentProduct::DEBIT :
 					if ( $parcels > 1 ) {
-						throw new InvalidArgumentException( 'Para crédito à vista, o número de parcelas deve ser 1' );
+						throw new InvalidArgumentException( 'Para crédito à vista ou débito, o número de parcelas deve ser 1' );
 					}
 				case PaymentProduct::INSTALLMENTS_BY_CARD_ISSUERS :
 				case PaymentProduct::INSTALLMENTS_BY_AFFILIATED_MERCHANTS :
@@ -71,7 +71,7 @@ class PaymentMethodNode implements XMLNode {
 					throw new InvalidArgumentException( 'Valor de $produto não é válido.' );
 			}
 
-			if (  !is_null( $creditCard ) ) {
+			if ( !is_null( $creditCard ) ) {
 				if ( in_array( $creditCard, array( CreditCard::VISA, CreditCard::MASTERCARD, CreditCard::ELO, CreditCard::AMEX, CreditCard::DINERS, CreditCard::DISCOVER ) ) ) {
 					$this->creditCard = $creditCard;
 				} else {
