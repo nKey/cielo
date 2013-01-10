@@ -6,6 +6,7 @@
  */
 
 require_once(dirname(__FILE__) . '/../nodes/AbstractCieloNode.php');
+require_once(dirname(__FILE__) . '/../constants/AuthorizationIndicator.php');
 require_once(dirname(__FILE__) . '/../response/TransactionResponse.php');
 
 /**
@@ -40,13 +41,14 @@ require_once(dirname(__FILE__) . '/../response/TransactionResponse.php');
 class TransactionRequest extends AbstractCieloNode {
 	/**
 	 * Indicador de autorização automática:
-	 * @li	0 (não autorizar)
-	 * @li	1 (autorizar somente se autenticada)
-	 * @li	2 (autorizar autenticada e não-autenticada)
-	 * @li	3 (autorizar sem passar por autenticação – válido somente para crédito)
+	 * @li	AuthorizationIndicator::AUTHENTICATE (0 - não autorizar)
+	 * @li	AuthorizationIndicator::AUTHORIZE_IF_AUTHENTICATED (1 - autorizar somente se autenticada)
+	 * @li	AuthorizationIndicator::AUTHORIZE_IF_AUTHENTICATED_OR_NOT (2 - autorizar autenticada e não-autenticada)
+	 * @li	AuthorizationIndicator::AUTHORIZE_DIRECTLY (3 - autorizar sem passar por autenticação – válido somente para crédito)
+	 * @li	AuthorizationIndicator::RECURRING_TRANSACTION (4 - transação recorrente)
 	 * @var		integer
 	 */
-	private $authorize = 2;
+	private $authorize = AuthorizationIndicator::AUTHORIZE_DIRECTLY;
 
 	/**
 	 * Seis primeiros números do cartão
@@ -81,7 +83,7 @@ class TransactionRequest extends AbstractCieloNode {
 	 * @throws	BadMethodCallException Se os dados do pedido não tiver sido especificado
 	 */
 	public function createXMLNode() {
-		if ( !empty( $this->returnURL ) || $this->authorize == 3 ) {
+		if ( !empty( $this->returnURL ) || $this->authorize == AuthorizationIndicator::AUTHORIZE_DIRECTLY ) {
 			$dom = new DOMDocument( '1.0' , 'UTF-8' );
 			$dom->loadXML( parent::createXMLNode() );
 			$dom->encoding = 'UTF-8';
@@ -141,14 +143,15 @@ class TransactionRequest extends AbstractCieloNode {
 	 * @brief	Indicador de autorização automática.
 	 * @details	Define se será feita a autorização automática, seu valor pode ser um dos seguinte:
 	 * @param	integer $authorize Indicador de autorização automática:
-	 * @li	0 (não autorizar)
-	 * @li	1 (autorizar somente se autenticada)
-	 * @li	2 (autorizar autenticada e não-autenticada)
-	 * @li	3 (autorizar sem passar por autenticação – válido somente para crédito)
+	 * @li	AuthorizationIndicator::AUTHENTICATE (0 - não autorizar)
+	 * @li	AuthorizationIndicator::AUTHORIZE_IF_AUTHENTICATED (1 - autorizar somente se autenticada)
+	 * @li	AuthorizationIndicator::AUTHORIZE_IF_AUTHENTICATED_OR_NOT (2 - autorizar autenticada e não-autenticada)
+	 * @li	AuthorizationIndicator::AUTHORIZE_DIRECTLY (3 - autorizar sem passar por autenticação – válido somente para crédito)
+	 * @li	AuthorizationIndicator::RECURRING_TRANSACTION (4 - transação recorrente)
 	 * @throws	InvalidArgumentException Se o valor informado para $authorize não for um dos descritos acima
 	 */
-	public function setAuthorization( $authorize = 2 ) {
-		if ( is_int( $authorize ) && ( $authorize >= 0 && $authorize <= 3 ) ) {
+	public function setAuthorization( $authorize = AuthorizationIndicator::AUTHORIZE_DIRECTLY) {
+		if ( is_int( $authorize ) && ( $authorize >= AuthorizationIndicator::AUTHENTICATE && $authorize <= AuthorizationIndicator::RECURRING_TRANSACTION ) ) {
 			$this->authorize = $authorize;
 		} else {
 			throw new InvalidArgumentException( 'Identificador de autorização inválido' );
