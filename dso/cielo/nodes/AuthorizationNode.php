@@ -6,7 +6,7 @@
  */
 
 require_once(dirname(__FILE__) . '/TransactionNode.php');
-require_once(dirname(__FILE__) . '/../AuthorizationStatus.php');
+require_once(dirname(__FILE__) . '/../constants/AuthorizationStatus.php');
 
 /**
  * @brief		Nó autorizacao
