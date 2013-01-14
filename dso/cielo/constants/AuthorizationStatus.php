@@ -41,35 +41,35 @@ interface AuthorizationStatus {
 	/**
 	 * Transação autorizada
 	 */
-	const TRANSACTION_AUTHORIZED = 00;
+	const TRANSACTION_AUTHORIZED = 0;
 
 	/**
 	 * Transação referida pelo emissor
 	 * Ação: Oriente o portador a contatar o emissor do cartão
 	 */
-	const TRANSACTION_DENIED_BY_ISSUER = 01;
+	const TRANSACTION_DENIED_BY_ISSUER = 1;
 
 	/**
 	 * Cartão com restrição
 	 * Ação: Oriente o portador a contatar o emissor do cartão
 	 */
-	const CARD_RESTRICTED_1 = 04;
+	const CARD_RESTRICTED_1 = 4;
 
 	/**
 	 * Transação não autorizada
 	 */
-	const TRANSACTION_UNAUTHORIZED = 05;
+	const TRANSACTION_UNAUTHORIZED = 5;
 
 	/**
 	 * Tente novamente
 	 */
-	const TRY_AGAIN_1 = 06;
+	const TRY_AGAIN_1 = 6;
 
 	/**
 	 * Cartão com restrição
 	 * Ação: Oriente o portador a contatar o emissor do cartão
 	 */
-	const CARD_RESTRICTED_2 = 07;
+	const CARD_RESTRICTED_2 = 7;
 
 	/**
 	 * Transação inválida
