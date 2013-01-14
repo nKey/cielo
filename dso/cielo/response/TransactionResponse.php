@@ -11,6 +11,7 @@ require_once(dirname(__FILE__) . '/../nodes/CaptureNode.php');
 require_once(dirname(__FILE__) . '/../nodes/CancellationNode.php');
 require_once(dirname(__FILE__) . '/../nodes/OrderDataNode.php');
 require_once(dirname(__FILE__) . '/../nodes/PaymentMethodNode.php');
+require_once(dirname(__FILE__) . '/../constants/ResponseError.php');
 
 /**
  * Retorno de uma Requisição ao webservice da Cielo
@@ -79,6 +80,18 @@ class TransactionResponse {
 	private $pan;
 
 	/**
+	 * Código do erro retornado
+	 * @var integer
+	 */
+	private $errorCode;
+
+	/**
+	 * Descrição do erro retornado
+	 * @var string
+	 */
+	private $errorMessage;
+
+	/**
 	 * @brief	Constroi o objeto de transação segundo o XML retornado pela Cielo
 	 * @details	O XML de resposta da Cielo pode vir de duas formas: &lt;transacao /&gt; ou &lt;erro /&gt;
 	 * Caso o retorno seja um &lt;erro /&gt; uma exceção Exception será disparada com o código e a mensagem.
@@ -113,7 +126,6 @@ class TransactionResponse {
 	 * </pre></code>
 	 * </p>
 	 * @param	$xml string XML Retornado por uma chamada RequisicaoAutenticacao
-	 * @throws	Exception Se o nó raiz da resposta da Cielo for um &lt;erro /&gt;
 	 */
 	public function __construct( $xml ) {
 		libxml_use_internal_errors( true );
@@ -122,18 +134,14 @@ class TransactionResponse {
 		$dom->loadXML( $xml );
 
 		if ( $dom->getElementsByTagName( 'erro' )->item( 0 ) instanceof DOMElement ) {
-			$codigo = $dom->getElementsByTagName( 'codigo' )->item( 0 )->nodeValue;
-			$mensagem = $dom->getElementsByTagName( 'mensagem' )->item( 0 )->nodeValue;
-
-			throw new Exception( $mensagem , $codigo );
-		} else if ( ( $retorno = $dom->getElementsByTagName( 'retorno-tid' )->item( 0 ) ) instanceof DOMElement ){
-			$this->tid = $this->getNodeValue( 'tid' , $retorno );
+			$this->errorCode = (int) $dom->getElementsByTagName( 'codigo' )->item( 0 )->nodeValue;
+			$this->errorMessage = $dom->getElementsByTagName( 'mensagem' )->item( 0 )->nodeValue;
 		} else {
-			$transacao = $dom->getElementsByTagName( 'transacao' )->item( 0 );
+			$transaction = $dom->getElementsByTagName( 'transacao' )->item( 0 );
 
-			if ( $transacao instanceof DOMElement ) {
-				$this->tid = $this->getNodeValue( 'tid' , $transacao );
-				$this->pan = $this->getNodeValue( 'pan' , $transacao );
+			if ( $transaction instanceof DOMElement ) {
+				$this->tid = $this->getNodeValue( 'tid' , $transaction );
+				$this->pan = $this->getNodeValue( 'pan' , $transaction );
 
 				$this->parseOrderData( $dom->getElementsByTagName( 'dados-pedido' )->item( 0 ) );
 				$this->parsePaymentMethod( $dom->getElementsByTagName( 'forma-pagamento' )->item( 0 ) );
@@ -142,11 +150,12 @@ class TransactionResponse {
 				$this->parseCapture( $dom->getElementsByTagName( 'captura' )->item( 0 ) );
 				$this->parseCancellation( $dom->getElementsByTagName( 'cancelamento' )->item( 0 ) );
 
-				$this->status = $this->getNodeValue( 'status' , $transacao );
-				$this->status = is_null( $this->status ) ?  -1 : (int) $this->status;
-				$this->url = $this->getNodeValue( 'url-autenticacao' , $transacao );
+				$this->status = $this->getNodeValue( 'status' , $transaction );
+				$this->status = is_null( $this->status ) ? TransactionStatus::UNKNOWN : (int) $this->status;
+				$this->url = $this->getNodeValue( 'url-autenticacao' , $transaction );
 			} else {
-				throw new RuntimeException( 'Um erro inesperado ocorreu, não existe um nó transação no retorno' );
+				$this->errorCode = ResponseError::SERVICE_ERROR;
+				$this->errorMessage = 'Um erro inesperado ocorreu, não existe um nó transação no retorno';
 			}
 		}
 	}
@@ -232,15 +241,17 @@ class TransactionResponse {
 	/**
 	 * @brief	Recupera o status da transação
 	 * @details	O código de status, pode ser um dos seguintes:
-	 * @li 0 - Criada
-	 * @li 1 - Em andamento
-	 * @li 2 - Autenticada
-	 * @li 3 - Não autenticada
-	 * @li 4 - Autorizada ou pendente de captura
-	 * @li 5 - Não autorizada
-	 * @li 6 - Capturada
-	 * @li 8 - Não capturada
-	 * @li 9 - Cancelada
+	 * @li	0 - Criada
+	 * @li	1 - Em andamento
+	 * @li	2 - Autenticada
+	 * @li 10 - Autenticando
+	 * @li	3 - Não autenticada
+	 * @li	4 - Autorizada ou pendente de captura
+	 * @li	5 - Não autorizada
+	 * @li	6 - Capturada
+	 * @li 12 - Cancelando
+	 * @li	9 - Cancelada
+	 * @li -1 - Desconhecido
 	 * @return	integer
 	 * @see		TransacaoStatus
 	 */
@@ -262,6 +273,68 @@ class TransactionResponse {
 	 */
 	public function getAuthenticationURL() {
 		return $this->url;
+	}
+
+	/**
+	 * Recupera o código de erro da resposta
+	 * @return	integer
+	 */
+	public function getErrorCode() {
+		return $this->errorCode;
+	}
+
+	/**
+	 * Recupera a mensagem de erro da resposta
+	 * @return	string
+	 */
+	public function getErrorMessage() {
+		return $this->errorMessage;
+	}
+
+	/**
+	 * Define o código HTTP a partir da resposta da transação
+	 * @return	integer
+	 * @throws	BadMethodCallException Se nenhuma transação tiver sido efetuada
+	 */
+	public function getHTTPStatusCode() {
+		if ( !is_null( $this->errorCode ) ) {
+			switch ( $this->errorCode ) {
+				case ResponseError::TRANSACTION_NOT_FOUND :
+				case ResponseError::TRANSACTION_ID_INVALID :
+					return 404; // Not Found
+				case ResponseError::AUTHORIZATION_EXPIRED :
+				case ResponseError::CAPTURE_EXPIRED :
+				case ResponseError::CANCELLATION_EXPIRED :
+					return 410; // Gone
+				case ResponseError::CAPTURE_FAILED :
+				case ResponseError::CANCELLATION_FAILED :
+				case ResponseError::SERVICE_ERROR :
+					return 502; // Bad Gateway
+				case ResponseError::SERVICE_UNAVAILABLE :
+					return 503; // Service Unavailable
+				case ResponseError::SERVICE_TIMEOUT :
+					return 504; // Gateway Timeout
+				default :
+					return 403; // Forbidden
+			}
+		} elseif ( !is_null( $this->authorization ) ) {
+			return $this->authorization->getHTTPStatusCode();
+		} elseif ( !is_null( $this->status ) ) {
+			switch ( $this->status ) {
+				case TransactionStatus::CREATED :
+					return 201; // Created
+				case TransactionStatus::ONGOING :
+				case TransactionStatus::AUTHENTICATING :
+				case TransactionStatus::CANCELLING :
+					return 202; // Accepted
+				case TransactionStatus::UNKNOWN :
+					return 502; // Bad Gateway
+				default :
+					return 200; // Ok
+			}
+		} else {
+			throw new BadMethodCallException( 'Nenhuma transação foi feita ainda' );
+		}
 	}
 
 	/**

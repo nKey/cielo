@@ -18,6 +18,7 @@
  * @li	6 - Capturada
  * @li 12 - Cancelando
  * @li	9 - Cancelada
+ * @li -1 - Desconhecido
  * @ingroup		Cielo
  * @interface	TransactionStatus
  */
@@ -71,4 +72,9 @@ interface TransactionStatus {
 	 * Transação cancelada
 	 */
 	const CANCELLED = 9;
+
+	/**
+	 * Status desconhecido
+	 */
+	const UNKNOWN = -1;
 }

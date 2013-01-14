@@ -50,7 +50,7 @@ class PaymentMethodNode implements XMLNode {
 	 * @param	string $creditCard Bandeira do cartão
 	 * @see		PaymentProduct
 	 * @see		CreditCard
-	 * @throws	UnexpectedValueException Se $parcels não for um inteiro, maior ou igual a 1
+	 * @throws	InvalidArgumentException Se $parcels não for um inteiro, maior ou igual a 1
 	 * @throws	InvalidArgumentException Se o número de parcelas for diferente de 1 para crédito à vista ou débito
 	 * @throws	InvalidArgumentException Se o valor de $produto não for válido
 	 */
@@ -75,11 +75,11 @@ class PaymentMethodNode implements XMLNode {
 				if ( in_array( $creditCard, array( CreditCard::VISA, CreditCard::MASTERCARD, CreditCard::ELO, CreditCard::AMEX, CreditCard::DINERS, CreditCard::DISCOVER ) ) ) {
 					$this->creditCard = $creditCard;
 				} else {
-					throw new UnexpectedValueException( 'Bandeira não reconhecida.' );
+					throw new InvalidArgumentException( 'Bandeira não reconhecida.' );
 				}
 			}
 		} else {
-			throw new UnexpectedValueException( '$parcelas precisa ser um inteiro, maior ou igual a 1' );
+			throw new InvalidArgumentException( '$parcelas precisa ser um inteiro, maior ou igual a 1' );
 		}
 	}
 

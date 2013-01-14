@@ -157,8 +157,6 @@ class Cielo {
 	 * @param	string $orderSoftDescriptor Texto de até 13 caracteres que será exibido na fatura do portador, após o nome do Estabelecimento Comercial
 	 * @param	string $freeField Um valor qualquer que poderá ser enviado à Cielo para ser resgatado posteriormente
 	 * @return	TransactionRequest
-	 * @throws	UnexpectedValueException Se $formaPagamento for 1 (Crédito à Vista) ou A (Débito) e o número de parcelas
-	 * for diferente de 1
 	 */
 	final public function buildTransaction( $creditCard , $cardNumber , $cardExpiration , $indicator , $securityCode , $orderNumber , $orderValue , $paymentProduct , $parcels = 1 , $holderName = null , $currency = 986 , $dateTime = null , $language = 'PT' , $description = null , $softDescriptor = null , $freeField = null ) {
 		$this->transaction = new TransactionRequest( $this->getHTTPRequester() );
@@ -232,27 +230,17 @@ class Cielo {
 	/**
 	 * Recupera o número de afiliação da loja junto à Cielo
 	 * @return	string O código de afiliação
-	 * @throws	BadMethodCallException Se não tivermos um código de afiliação
 	 */
 	public function getAffiliationCode() {
-		if ( is_null( $this->affiliationCode ) ) {
-			throw new BadMethodCallException( 'Código de afiliação não definido' );
-		} else {
-			return $this->affiliationCode;
-		}
+		return $this->affiliationCode;
 	}
 
 	/**
 	 * Recupera a chave da afiliação da loja junto à Cielo
 	 * @return	string A chave de afiliação
-	 * @throws	BadMethodCallException Se não tivermos uma chave de afiliação
 	 */
 	public function getAffiliationKey() {
-		if ( is_null( $this->affiliationKey ) ) {
-			throw new BadMethodCallException( 'Chave de afiliação não definido' );
-		} else {
-			return $this->affiliationKey;
-		}
+		return $this->affiliationKey;
 	}
 
 	/**
@@ -274,11 +262,7 @@ class Cielo {
 	 * @return	string
 	 */
 	public function getReturnURL() {
-		if ( !is_null( $this->returnURL ) ) {
-			return $this->returnURL;
-		} else {
-			throw new BadMethodCallException( 'Ainda não foi definido a URL de retorno' );
-		}
+		return $this->returnURL;
 	}
 
 	/**

@@ -40,12 +40,7 @@ final class ECI {
 	 * Recupera o valor do indicador de segurança
 	 * @param	integer $indicator Tipo do indicador de segurança
 	 * @param	string $flag Bandeira do cartão de crédito
-	 * @see		CreditCard::MASTERCARD
-	 * @see		CreditCard::VISA
-	 * @see		CreditCard::ELO
-	 * @see		CreditCard::AMEX
-	 * @see		CreditCard::DINERS
-	 * @see		CreditCard::DISCOVER
+	 * @see		CreditCard
 	 * @throws	UnexpectedValueException Se a bandeira não for conhecida
 	 * @throws	UnexpectedValueException Se o ECI não for conhecido
 	 */
@@ -53,11 +48,11 @@ final class ECI {
 		if ( in_array( $flag, array( CreditCard::VISA, CreditCard::MASTERCARD, CreditCard::ELO, CreditCard::AMEX, CreditCard::DINERS, CreditCard::DISCOVER ) ) ) {
 			switch ( $indicator ) {
 				case ECI::AUTHENTICATED :
-					return $flag == CreditCard::VISA ? 5 : ($flag == CreditCard::MASTERCARD ? 2 : '');
+					return $flag == CreditCard::VISA ? 5 : ( $flag == CreditCard::MASTERCARD ? 2 : '' );
 				case ECI::WITHOUT_AUTHENTICATION :
-					return $flag == CreditCard::VISA ? 6 : ($flag == CreditCard::MASTERCARD ? 1 : '');
+					return $flag == CreditCard::VISA ? 6 : ( $flag == CreditCard::MASTERCARD ? 1 : '' );
 				case ECI::UNAUTHENTICATED :
-					return $flag == CreditCard::VISA ? 7 : ($flag == CreditCard::MASTERCARD ? 0 : '');
+					return $flag == CreditCard::VISA ? 7 : ( $flag == CreditCard::MASTERCARD ? 0 : '' );
 				case ECI::AFFILIATED_DID_NOT_SEND_AUTHENTICATION :
 					return $flag == CreditCard::MASTERCARD ? 0 : 7;
 				default :

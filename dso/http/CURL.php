@@ -51,7 +51,9 @@ class CURL implements HTTPRequest {
 	 * @param	$data array Dados que serão enviados
 	 * @param	string $method Método que será utilizado para enviar os dados
 	 * @return	string Resposta da requisição HTTP
-	 * @throws	BadMethodCallException Caso o recurso não esteja aberto.
+	 * @throws	BadMethodCallException Caso o recurso não esteja aberto
+	 * @throws	InvalidArgumentException Se o método HTTP passado é inválido
+	 * @throws	RuntimeException Se ocorrer algum erro na requisição
 	 */
 	public function execute( array $data = array() , $method = HTTPRequestMethod::GET ) {
 		if ( $this->testResource() ) {
@@ -61,7 +63,6 @@ class CURL implements HTTPRequest {
 				case HTTPRequestMethod::POST :
 					curl_setopt( $this->curl , CURLOPT_POST , 1 );
 					curl_setopt( $this->curl , CURLOPT_POSTFIELDS , http_build_query( $data ) );
-
 					break;
 				case HTTPRequestMethod::DELETE :
 				case HTTPRequestMethod::PUT :
@@ -70,7 +71,7 @@ class CURL implements HTTPRequest {
 					curl_setopt( $this->curl , CURLOPT_URL , sprintf( '%s?%s' , $this->target , http_build_query( $data ) ) );
 					break;
 				default :
-					throw new UnexpectedValueException( 'Método desconhecido' );
+					throw new InvalidArgumentException( 'Método HTTP desconhecido' );
 			}
 
 			$resp = curl_exec( $this->curl );
