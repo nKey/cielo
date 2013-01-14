@@ -11,11 +11,12 @@
  * @li	0 - Criada
  * @li	1 - Em andamento
  * @li	2 - Autenticada
+ * @li 10 - Autenticando
  * @li	3 - Não autenticada
  * @li	4 - Autorizada ou pendente de captura
  * @li	5 - Não autorizada
  * @li	6 - Capturada
- * @li	8 - Não capturada
+ * @li 12 - Cancelando
  * @li	9 - Cancelada
  * @ingroup		Cielo
  * @interface	TransactionStatus
@@ -30,6 +31,11 @@ interface TransactionStatus {
 	 * Transação em andamento
 	 */
 	const ONGOING = 1;
+
+	/**
+	 * Transação em fase de autenticação
+	 */
+	const AUTHENTICATING = 10;
 
 	/**
 	 * Transação autenticada
@@ -57,17 +63,12 @@ interface TransactionStatus {
 	const CAPTURED = 6;
 
 	/**
-	 * Transação não capturada
+	 * Transação em fase de cancelament
 	 */
-	const NOT_CAPTURED = 8;
+	const CANCELLING = 12;
 
 	/**
 	 * Transação cancelada
 	 */
 	const CANCELLED = 9;
-
-	/**
-	 * Transação em fase de autenticação
-	 */
-	const AUTHENTICATING = 10;
 }
