@@ -1,43 +1,43 @@
 <?php
 /**
- * @author		João Batista Neto
- * @brief		Classes relacionadas ao webservice da Cielo
- * @package		dso.cielo
+ * @author      João Batista Neto
+ * @brief       Classes relacionadas ao webservice da Cielo
+ * @package     dso.cielo
  */
 
 /**
  * Bandeira do cartão
- * @ingroup		Cielo
- * @interface	CreditCard
+ * @ingroup     Cielo
+ * @interface   CreditCard
  */
 interface CreditCard {
-	/**
-	 * Cartão Visa
-	 */
-	const VISA = 'visa';
+    /**
+     * Cartão Visa
+     */
+    const VISA = 'visa';
 
-	/**
-	 * Cartão MasterCard
-	 */
-	const MASTERCARD = 'mastercard';
+    /**
+     * Cartão MasterCard
+     */
+    const MASTERCARD = 'mastercard';
 
-	/**
-	 * Cartão Elo
-	 */
-	const ELO = 'elo';
+    /**
+     * Cartão Elo
+     */
+    const ELO = 'elo';
 
-	/**
-	 * Cartão American Express
-	 */
-	const AMEX = 'amex';
+    /**
+     * Cartão American Express
+     */
+    const AMEX = 'amex';
 
-	/**
-	 * Cartão Diners Club
-	 */
-	const DINERS = 'diners';
+    /**
+     * Cartão Diners Club
+     */
+    const DINERS = 'diners';
 
-	/**
-	 * Cartão Discover
-	 */
-	const DISCOVER = 'discover';
+    /**
+     * Cartão Discover
+     */
+    const DISCOVER = 'discover';
 }
