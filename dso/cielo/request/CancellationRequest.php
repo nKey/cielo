@@ -26,6 +26,12 @@ class CancellationRequest extends AbstractCieloNode {
     private $tid;
 
     /**
+     * Valor do cancelamento. Caso não fornecido, o valor atribuído é o valor da autorização, ou seja, cancelamento total.
+     * @var     integer
+     */
+    private $value;
+
+    /**
      * Cria o nó XML que representa o objeto ou conjunto de objetos na composição
      * @return  string
      * @see     Cielo::createXMLNode()
@@ -45,6 +51,12 @@ class CancellationRequest extends AbstractCieloNode {
             if ( $EcData instanceof DOMElement ) {
                 $tid = $dom->createElement( 'tid' , $this->tid );
                 $query->insertBefore( $tid , $EcData );
+
+                if ( !is_null( $this->value ) ) {
+                    $value = $dom->createElement( 'valor' , $this->value );
+                    $query->insertBefore( $value , $EcData );
+                }
+
             } else {
                 throw new BadMethodCallException( 'O nó dados-ec precisa ser informado.' );
             }
@@ -86,5 +98,19 @@ class CancellationRequest extends AbstractCieloNode {
      */
     protected function getRootNode() {
         return 'requisicao-cancelamento';
+    }
+
+    /**
+     * @brief   Define valor do cancelamento.
+     * @details Caso não fornecido, o valor atribuído é o valor da autorização.
+     * @param   integer $value
+     * @throws  InvalidArgumentException
+     */
+    public function setValue( $value ) {
+        if ( is_int( $value ) ) {
+            $this->value = $value;
+        } else {
+            throw new InvalidArgumentException( sprintf( 'O valor deve ser um inteiro, %s foi dado.' , gettype( $value ) ) );
+        }
     }
 }

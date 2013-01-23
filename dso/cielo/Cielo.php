@@ -174,29 +174,41 @@ class Cielo {
      * @brief   Cria um objeto de requisição de cancelamento de transacao
      * @details Constroi o objeto de transação a partir de uma consulta para cancelamento, utilizando o TID (<i>Transaction ID</i>).
      * @param   string $tid TID da transação que será utilizado para fazer a consulta
+     * @param   integer $value Valor a ser cancelado. Caso não seja informado, será um cancelamento total.
      * @return  CancellationRequest
+     * @throws  InvalidArgumentException Se o valor for definido mas não for numérico
      */
-    final public function buildCancellationTransaction( $tid ) {
-        $this->transaction = new CancellationRequest( $this->getHTTPRequester() );
-        $this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
-        $this->transaction->setTID( $tid );
-        $this->transaction->setURL( $this->cieloURL );
+    final public function buildCancellationTransaction( $tid , $value = null ) {
+        $nullValue = is_null( $value );
 
-        return $this->transaction;
+        if ( $nullValue || is_int( $value ) ) {
+            $this->transaction = new CancellationRequest( $this->getHTTPRequester() );
+            $this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
+            $this->transaction->setTID( $tid );
+            $this->transaction->setURL( $this->cieloURL );
+
+            if ( !$nullValue ) {
+                $this->transaction->setValue( $value );
+            }
+
+            return $this->transaction;
+        } else {
+            throw new InvalidArgumentException( sprintf( 'O valor deve ser um inteiro, %s foi dado' , gettype( $value ) ) );
+        }
     }
 
     /**
      * @brief   Cria um objeto Transacao
      * @details Constroi o objeto de transação a partir de uma captura, utilizando o TID (<i>Transaction ID</i>).
      * @param   string $tid TID da transação que será utilizado para fazer a captura
-     * @param   float $value Valor que será capturado
+     * @param   integer $value Valor a ser capturado. Caso não seja informado, será uma captura total.
      * @return  CaptureRequest
      * @throws  InvalidArgumentException Se o valor for definido mas não for numérico
      */
     final public function buildCaptureTransaction( $tid , $value = null ) {
         $nullValue = is_null( $value );
 
-        if ( $nullValue || is_float( $value ) || is_int( $value ) ) {
+        if ( $nullValue || is_int( $value ) ) {
             $this->transaction = new CaptureRequest( $this->getHTTPRequester() );
             $this->transaction->addNode( new EcDataNode( $this->getAffiliationCode() , $this->getAffiliationKey() ) );
             $this->transaction->setTID( $tid );
@@ -208,7 +220,7 @@ class Cielo {
 
             return $this->transaction;
         } else {
-            throw new InvalidArgumentException( sprintf( 'O valor deve ser um inteiro ou float, %s foi dado' , gettype( $value ) ) );
+            throw new InvalidArgumentException( sprintf( 'O valor deve ser um inteiro, %s foi dado' , gettype( $value ) ) );
         }
     }
 

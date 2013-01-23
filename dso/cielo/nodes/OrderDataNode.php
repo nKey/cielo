@@ -152,7 +152,7 @@ class OrderDataNode implements XMLNode {
 
     /**
      * Recupera o valor do pedido
-     * @return  float
+     * @return  integer
      */
     public function getOrderValue() {
         return $this->orderValue;

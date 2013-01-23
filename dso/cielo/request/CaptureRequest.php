@@ -64,12 +64,12 @@ class CaptureRequest extends AbstractCieloNode {
                 $tid = $dom->createElement( 'tid' , $this->tid );
                 $query->insertBefore( $tid , $EcData );
 
-                if (  !is_null( $this->value ) ) {
+                if ( !is_null( $this->value ) ) {
                     $value = $dom->createElement( 'valor' , $this->value );
                     $query->insertBefore( $value , $EcData );
                 }
 
-                if (  !is_null( $this->annex ) ) {
+                if ( !is_null( $this->annex ) ) {
                     $annex = $dom->createElement( 'anexo' );
                     $query->insertBefore( $annex , $EcData );
                 }
@@ -131,14 +131,14 @@ class CaptureRequest extends AbstractCieloNode {
     /**
      * @brief   Define valor da captura.
      * @details Caso não fornecido, o valor atribuído é o valor da autorização.
-     * @param   float $value
+     * @param   integer $value
      * @throws  InvalidArgumentException
      */
     public function setValue( $value ) {
-        if ( is_float( $value ) || is_int( $value ) ) {
+        if ( is_int( $value ) ) {
             $this->value = $value;
         } else {
-            throw new InvalidArgumentException( sprintf( 'O valor deve ser um inteiro ou float, %s foi dado.' , gettype( $value ) ) );
+            throw new InvalidArgumentException( sprintf( 'O valor deve ser um inteiro, %s foi dado.' , gettype( $value ) ) );
         }
     }
 }
