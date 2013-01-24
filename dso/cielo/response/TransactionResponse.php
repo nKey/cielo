@@ -184,7 +184,7 @@ class TransactionResponse {
      * @return  CancellationNode
      */
     public function getCancellation() {
-        return $this->capture;
+        return $this->cancellation;
     }
 
     /**
