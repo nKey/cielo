@@ -125,12 +125,12 @@ class OrderDataNode implements XMLNode {
 
         $node .= sprintf( '<data-hora>%s</data-hora>' , $this->dateTime );
 
-        if ( !empty( $this->language ) ) {
-            $node .= sprintf( '<idioma>%s</idioma>' , $this->language );
-        }
-
         if ( !empty( $this->description ) ) {
             $node .= sprintf( '<descricao>%s</descricao>' , $this->description );
+        }
+
+        if ( !empty( $this->language ) ) {
+            $node .= sprintf( '<idioma>%s</idioma>' , $this->language );
         }
 
         if ( !empty( $this->softDescriptor ) ) {

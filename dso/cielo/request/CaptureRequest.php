@@ -51,7 +51,7 @@ class CaptureRequest extends AbstractCieloNode {
      * @throws  BadMethodCallException Se os dados do pedido não tiver sido especificado
      */
     public function createXMLNode() {
-        if (  !empty( $this->tid ) ) {
+        if ( !empty( $this->tid ) ) {
             $dom = new DOMDocument( '1.0' , 'UTF-8' );
             $dom->loadXML( parent::createXMLNode() );
             $dom->encoding = 'UTF-8';
