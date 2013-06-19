@@ -66,12 +66,12 @@ class CaptureRequest extends AbstractCieloNode {
 
                 if ( !is_null( $this->value ) ) {
                     $value = $dom->createElement( 'valor' , $this->value );
-                    $query->insertBefore( $value , $EcData );
+                    $query->appendChild( $value );
                 }
 
                 if ( !is_null( $this->annex ) ) {
                     $annex = $dom->createElement( 'anexo' );
-                    $query->insertBefore( $annex , $EcData );
+                    $query->appendChild( $annex );
                 }
             } else {
                 throw new BadMethodCallException( 'O nó dados-ec precisa ser informado.' );
