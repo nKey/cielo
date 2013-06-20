@@ -100,7 +100,9 @@ class OrderDataNode implements XMLNode {
         $this->dateTime = $dateTime;
 
         $this->description = $description;
-        $this->softDescriptor = substr($softDescriptor, 0, 13);
+        if ($softDescriptor) {
+            $this->softDescriptor = substr($softDescriptor, 0, 13);
+        }
     }
 
     /**
